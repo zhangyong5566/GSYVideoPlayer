@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
+import tv.danmaku.ijk.media.exo2.hls.HlsMediaSource;
 import tv.danmaku.ijk.media.exo2.source.GSYDefaultHttpDataSource;
 import tv.danmaku.ijk.media.exo2.source.GSYExoHttpDataSourceFactory;
 
@@ -19,14 +20,12 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
@@ -127,7 +126,7 @@ public class ExoSourceManager {
                     factory).createMediaSource(contentUri);
 
         }
-
+        //byte[] buffer = new byte[48];for(int i=0;i < encryptionKey.length; i++) { buffer[i] = encryptionKey[i]; } encryptionKey = buffer;
         switch (contentType) {
             case C.TYPE_SS:
                 mediaSource = new SsMediaSource.Factory(
@@ -141,7 +140,8 @@ public class ExoSourceManager {
                                 getHttpDataSourceFactory(mAppContext, preview, uerAgent))).createMediaSource(contentUri);
                 break;
             case C.TYPE_HLS:
-                mediaSource = new HlsMediaSource.Factory(getDataSourceFactoryCache(mAppContext, cacheEnable, preview, cacheDir, uerAgent)).createMediaSource(contentUri);
+                mediaSource = new HlsMediaSource.Factory(getDataSourceFactoryCache(mAppContext, cacheEnable, preview, cacheDir, uerAgent))
+                        .createMediaSource(contentUri);
                 break;
             case TYPE_RTMP:
                 RtmpDataSourceFactory rtmpDataSourceFactory = new RtmpDataSourceFactory(null);
@@ -334,18 +334,7 @@ public class ExoSourceManager {
         if (mMapHeadData != null && mMapHeadData.size() > 0) {
             allowCrossProtocolRedirects = "true".equals(mMapHeadData.get("allowCrossProtocolRedirects"));
         }
-        if (sSkipSSLChain) {
-            GSYExoHttpDataSourceFactory dataSourceFactory = new GSYExoHttpDataSourceFactory(uerAgent, preview ? null : new DefaultBandwidthMeter.Builder(mAppContext).build(),
-                    connectTimeout,
-                    readTimeout, allowCrossProtocolRedirects);
-            if (mMapHeadData != null && mMapHeadData.size() > 0) {
-                for (Map.Entry<String, String> header : mMapHeadData.entrySet()) {
-                    dataSourceFactory.getDefaultRequestProperties().set(header.getKey(), header.getValue());
-                }
-            }
-            return dataSourceFactory;
-        }
-        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(uerAgent, preview ? null : new DefaultBandwidthMeter.Builder(mAppContext).build(),
+        GSYExoHttpDataSourceFactory dataSourceFactory = new GSYExoHttpDataSourceFactory(uerAgent, preview ? null : new DefaultBandwidthMeter.Builder(mAppContext).build(),
                 connectTimeout,
                 readTimeout, allowCrossProtocolRedirects);
         if (mMapHeadData != null && mMapHeadData.size() > 0) {

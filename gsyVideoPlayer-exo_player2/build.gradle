@@ -26,6 +26,10 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -35,6 +39,9 @@ dependencies {
     api viewDependencies.exo_player2_rtmp
     //api project(':gsyVideoPlayer-base')
     api "com.shuyu:gsyVideoPlayer-base:$gsyVideoVersion"
+
+    compileOnly 'org.checkerframework:checker-qual:2.5.0'
+    compileOnly 'org.checkerframework:checker-compat-qual:2.5.0'
 
 }
 

@@ -111,4 +111,7 @@ dependencies {
     debugImplementation dataDependencies.leakcanary
     releaseImplementation dataDependencies.leakcanary_no_op
 
+    implementation 'com.github.Jay-Goo:M3U8Downloader:V1.0.8'
+    implementation 'commons-codec:commons-codec:1.4'
+
 }
